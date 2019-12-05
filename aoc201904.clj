@@ -1,7 +1,10 @@
+(defn int->vec-of-ints [s]
+  (map #(Integer/parseInt %) (clojure.string/split (.toString s) #"")))
+
 (defn main
   [from to]
   (count (into #{}
-               (comp (map i)
+               (comp (map int->vec-of-ints)
                      (filter (fn [ps]
                                (and (apply <= ps)
                                     (->> (group-by identity ps)
