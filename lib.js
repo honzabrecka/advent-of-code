@@ -24,10 +24,23 @@ const reduce = (reducer, init) => (seq) => {
 }
 
 const map = (transformer) => (seq) => {
+  if (typeof seq[Symbol.iterator] === 'function')
+    return (function* () {
+      for (const x of seq)
+        yield transformer(x)
+    })()
   if (typeof seq[Symbol.asyncIterator] === 'function')
     return (async function* () {
       for await (const x of seq)
         yield transformer(x) // TODO await transformer?
+    })()
+  throw new Error('Not implemented for seq', seq)
+}
+
+const sort = (compare) => (seq) => {
+  if (Array.isArray(seq))
+    return (function () {
+      return seq.sort(compare)
     })()
   throw new Error('Not implemented for seq', seq)
 }
@@ -49,6 +62,7 @@ module.exports = {
   then,
   reduce,
   map,
+  sort,
   ///
   lineReader,
   prn,
