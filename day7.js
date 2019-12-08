@@ -1,5 +1,5 @@
 const { prn, pipe, reduce, sort } = require('./lib')
-const { parse, runIntCode } = require('./intCodeComputer')
+const { parse, runIntCode, io, runUntilIO } = require('./intCodeComputer')
 
 const program = parse('3,8,1001,8,10,8,105,1,0,0,21,42,59,76,85,106,187,268,349,430,99999,3,9,102,3,9,9,1001,9,2,9,1002,9,3,9,1001,9,3,9,4,9,99,3,9,102,3,9,9,101,3,9,9,1002,9,2,9,4,9,99,3,9,102,3,9,9,1001,9,4,9,1002,9,5,9,4,9,99,3,9,102,2,9,9,4,9,99,3,9,101,3,9,9,1002,9,2,9,1001,9,4,9,1002,9,2,9,4,9,99,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,99,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,101,2,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,1,9,4,9,3,9,102,2,9,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,101,1,9,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,99,3,9,1002,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,102,2,9,9,4,9,3,9,1001,9,1,9,4,9,3,9,101,1,9,9,4,9,3,9,1002,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,1001,9,2,9,4,9,3,9,102,2,9,9,4,9,3,9,1002,9,2,9,4,9,99')
 
@@ -15,17 +15,28 @@ function* permutations5(from, to) {
 }
 
 const createGen = (program) => (phase) => {
-  const gen = runIntCode(program)
-  gen.next()
+  const [gen, write] = runIntCode(program)
+  let phaseSet = false
+  let output
   return (value) => {
-    gen.next(phase)
-    return gen.next(value)
+    if (!phaseSet) {
+      runUntilIO(gen)
+      write(phase)
+      phaseSet = true
+    }
+    const next = runUntilIO(gen)
+    if (next[0] == io.END)
+      return [io.END, output]
+    else
+      write(value)
+    output = runUntilIO(gen)[1]
+    return [io.OUTPUT, output]
   }
 }
 
 const runGens = (gens, value) => {
-  const result = gens.reduce(({ value }, gen) => gen(value), { value })
-  return result.done ? value : runGens(gens, result.value)
+  const result = gens.reduce((x, gen) => gen(x[1]), [undefined, value])
+  return result[0] == io.END ? value : runGens(gens, result[1])
 }
 
 const main1 = (program) =>
