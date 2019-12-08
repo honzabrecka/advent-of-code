@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+node src/day1>temp.output
+diff temp.output test-output/day1.txt
+
+node src/day2>temp.output
+diff temp.output test-output/day2.txt
+
+clj -m day3>temp.output
+diff temp.output test-output/day3.txt
+
+clj -m day4>temp.output
+diff temp.output test-output/day4.txt
+
+node src/day5>temp.output
+diff temp.output test-output/day5.txt
+
+clj -m day6>temp.output
+diff temp.output test-output/day6.txt
+
+node src/day7>temp.output
+diff temp.output test-output/day7.txt
+
+clj -m day8>temp.output
+diff -b temp.output test-output/day8.txt

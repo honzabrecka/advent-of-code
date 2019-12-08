@@ -12,7 +12,7 @@ const main1 = () =>
     map(fuel),
     reduce((a, b) => a + b, 0),
     then(prn),
-  )(aocInputReader('day1-input1.txt'))
+  )(aocInputReader('../input/day1.txt'))
 
 const recursiveFuel = (n) => {
   const m = fuel(n)
@@ -25,7 +25,7 @@ const main2 = () =>
     map(pipe(fuel, recursiveFuel)),
     reduce((a, b) => a + b, 0),
     then(prn),
-  )(aocInputReader('day1-input1.txt'))
+  )(aocInputReader('../input/day1.txt'))
 
 main1() // 3297866
 main2() // 4943923

@@ -1,9 +1,9 @@
-(ns sandbox.advent.day062019
+(ns day6
   (:require [clojure.java.io :as io]))
 
 (defn ->graph
   []
-  (with-open [reader (io/reader "./data/aoc2019/day6.txt")]
+  (with-open [reader (io/reader "./input/day6.txt")]
     (into {}
           (comp (map #(clojure.string/split % #"\)"))
                 (map (fn [[parent name]] [name parent])))
@@ -38,3 +38,8 @@
     (+ (count (take-until-common you san))
        (count (take-until-common san you)))))
 ; 349
+
+(defn -main
+  []
+  (println (main1))
+  (println (main2)))
