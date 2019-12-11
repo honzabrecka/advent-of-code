@@ -23,3 +23,9 @@ diff temp.output test-output/day7.txt
 
 clj -m day8>temp.output
 diff -b temp.output test-output/day8.txt
+
+node src/day9>temp.output
+diff temp.output test-output/day9.txt
+
+node src/day11>temp.output
+diff -b temp.output test-output/day11.txt
