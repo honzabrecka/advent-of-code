@@ -35,3 +35,6 @@ diff -b temp.output test-output/day11.txt
 
 node src/day12>temp.output
 diff -b temp.output test-output/day12.txt
+
+node src/day19>temp.output
+diff -b temp.output test-output/day19.txt
