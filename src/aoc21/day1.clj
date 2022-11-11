@@ -1,7 +1,7 @@
 (ns aoc21.day1
   (:require [clojure.java.io :as io]))
 
-(def input "./data/aoc21/day1.txt.txt")
+(def input "./data/aoc21/day1.txt")
 
 (defn solve-1
   []
