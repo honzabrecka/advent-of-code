@@ -12,10 +12,12 @@
 
 (def scissors 3)
 
+; aka wining move
 (defn next-shape
   [x]
   (inc (mod x 3)))
 
+; aka losing move
 (defn prev-shape
   [x]
   (inc (mod (inc x) 3)))
