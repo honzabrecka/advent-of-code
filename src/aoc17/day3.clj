@@ -21,17 +21,20 @@
    (cons [0 0]
          (grid [1 0] 3 1 1 1)))
   ([[x y] d s r r2]
-   (lazy-seq
-     (cons [x y]
-           (grid (case (if (= r s) (mod (inc d) 4) d)
-                   0 (up x y)
-                   1 (left x y)
-                   2 (down x y)
-                   3 (right x y))
-                 (if (= r s) (mod (inc d) 4) d)
-                 (if (= r2 (* 2 s)) (inc s) s)
-                 (if (= r s) 1 (inc r))
-                 (if (= r2 (* 2 s)) 1 (inc r2)))))))
+   (let [end-direction? (= r s)
+         end-step? (= r2 (* 2 s))
+         next-dir (fn [] (mod (inc d) 4))]
+     (lazy-seq
+       (cons [x y]
+             (grid (case (if end-direction? (next-dir) d)
+                     0 (up x y)
+                     1 (left x y)
+                     2 (down x y)
+                     3 (right x y))
+                   (if end-direction? (next-dir) d)
+                   (if end-step? (inc s) s)
+                   (if end-direction? 1 (inc r))
+                   (if end-step? 1 (inc r2))))))))
 
 (defn solve-1
   []
