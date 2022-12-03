@@ -1,7 +1,7 @@
 (ns aoc15.day2
   (:require [clojure.java.io :as io]))
 
-(def input "./data/aoc15/day2.txt.txt")
+(def input "./data/aoc15/day2.txt")
 
 (defn parse
   [row]

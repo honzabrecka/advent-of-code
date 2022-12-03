@@ -2,7 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.test :refer [deftest is testing run-tests]]))
 
-(def input "./data/aoc18/day1.txt.txt")
+(def input "./data/aoc18/day1.txt")
 
 (defn parse-change
   [change]

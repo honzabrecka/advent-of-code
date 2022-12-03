@@ -1,6 +1,6 @@
 (ns aoc15.day1)
 
-(def input "./data/aoc15/day1.txt.txt")
+(def input "./data/aoc15/day1.txt")
 
 (defn solve-1
   []
