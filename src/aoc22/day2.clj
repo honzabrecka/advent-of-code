@@ -57,10 +57,10 @@
 
 (defn score-2
   [[a end]]
-  (cond
-    (= end :draw) (+ 3 a)
-    (= end :lose) (+ 0 (prev-shape a))
-    (= end :win)  (+ 6 (next-shape a))))
+  (case end
+    :draw (+ 3 a)
+    :lose (+ 0 (prev-shape a))
+    :win  (+ 6 (next-shape a))))
 
 (defn solve-2
   []
