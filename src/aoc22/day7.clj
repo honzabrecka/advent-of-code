@@ -17,37 +17,35 @@
       (has? m 6) [:dir (nth m 7)]
       :else [:error])))
 
-(defn get-input!
-  [input]
-  (with-open [reader (io/reader input)]
-    (into [] (map parse-line) (line-seq reader))))
-
 (defn dir-index
   [ls name]
   (->> ls
        (keep-indexed (fn [i v] [i v]))
-       (filter (fn [[_ x]] (and (= (:type x) :dir) (= (:name x) name))))
+       (filter (fn [[_ x]] (= ((juxt :type :name) x) [:dir name])))
        ffirst))
 
-(defn file-tree
+(defn get-tree!
   [input]
-  (second
-    (reduce (fn [[path acc] input]
-              (let [[type a b] input]
-                (cond
-                  (= type :cd)
-                  [(cond
-                     (= a "/") [:files]
-                     (= a "..") (->> path butlast butlast vec)
-                     :else (concat path [(dir-index (get-in acc path) a) :files]))
-                   acc]
-                  (= type :dir)
-                  [path (update-in acc path #(conj % {:type :dir :name a :files []}))]
-                  (= type :file)
-                  [path (update-in acc path #(conj % {:type :file :name a :size b}))]
-                  :else
-                  [path acc])))
-            [[:files] {:type :dir :name "/" :files []}] input)))
+  (with-open [reader (io/reader input)]
+    (second
+      (transduce (map parse-line)
+                 (completing
+                   (fn reduce [[path acc] [type a b]]
+                     (cond
+                       (= type :cd)
+                       [(cond
+                          (= a "/") [:files]
+                          (= a "..") (->> path butlast butlast vec)
+                          :else (concat path [(dir-index (get-in acc path) a) :files]))
+                        acc]
+                       (= type :dir)
+                       [path (update-in acc path #(conj % {:type :dir :name a :files []}))]
+                       (= type :file)
+                       [path (update-in acc path #(conj % {:type :file :name a :size b}))]
+                       :else
+                       [path acc])))
+                 [[:files] {:type :dir :name "/" :files []}]
+                 (line-seq reader)))))
 
 (defn dir-sizes
   [path {:keys [files]}]
@@ -66,8 +64,7 @@
 
 (defn solve-1
   []
-  (->> (get-input! input)
-       file-tree
+  (->> (get-tree! input)
        (dir-sizes ["/"])
        vals
        (filter #(< % 100000))
@@ -75,8 +72,7 @@
 
 (defn solve-2
   []
-  (let [sizes (->> (get-input! input)
-               file-tree
+  (let [sizes (->> (get-tree! input)
                (dir-sizes ["/"]))
         total (get sizes ["/"])]
     (->> sizes
