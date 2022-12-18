@@ -6,7 +6,7 @@
 (defn parse-line
   [s]
   (let [[_ direction count] (re-matches #"(R|L|U|D) ([\d]+)" s)]
-    (map (fn [_] (keyword direction)) (range (parse-long count)))))
+    (repeat (parse-long count) (keyword direction))))
 
 (def ds
   {:L [-1 0]
