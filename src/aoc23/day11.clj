@@ -16,7 +16,7 @@
           :when (= (get-in-grid grid [x y]) \#)]
       [x y])))
 
-(defn empty
+#_(defn empty
   [grid galaxies]
   (let [w (count (get grid 0))
         h (count grid)
@@ -24,6 +24,15 @@
         ys (into #{} (map second galaxies))]
     [(clojure.set/difference (into #{} (range w)) xs)
      (clojure.set/difference (into #{} (range h)) ys)]))
+
+(defn empty
+  [grid galaxies]
+  (let [w (count (get grid 0))
+        h (count grid)
+        xs (into #{} (map first galaxies))
+        ys (into #{} (map second galaxies))]
+    [(into #{} (remove #(contains? xs %)) (range w))
+     (into #{} (remove #(contains? ys %)) (range h))]))
 
 (defn get-grid!
   []
@@ -69,6 +78,15 @@
   []
   (let [grid (get-grid!)
         pairs (galaxies-pairs (grid :galaxies))]
+    #_(transduce (comp (map vec)
+                     (map (fn [[a b]]
+                            [(shift 1000000 (grid :empty) a)
+                             (shift 1000000 (grid :empty) b)]))
+                     (map (fn [[[ax ay] [bx by]]]
+                            [(abs (- ax bx))
+                             (abs (- ay by))]))
+                     (map (fn [[dx dy]] (+ dx dy))))
+               + pairs)
     (->> pairs
          (map vec)
          (map (fn [[a b]]
