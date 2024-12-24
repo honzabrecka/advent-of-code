@@ -39,7 +39,7 @@
         (conj content [label value])
         (vec (assoc content i [label value]))))))
 
-(defn dash-op
+#_(defn dash-op
   [label]
   (fn [content]
     (vec (remove (fn [[label' _]] (= label label')) content))))
@@ -70,15 +70,28 @@
                  hashtable)
          (focusing-power))))
 
+(defn new-h
+  []
+  (vec (repeat 256 (array-map))))
+
+(defn assoc-h
+  [hashtable key value]
+  (let [i (hash key)]
+    (update hashtable i assoc key value)))
+
+(defn dissoc-h
+  [hashtable key]
+  (let [i (hash key)]
+    (update hashtable i dissoc key)))
+
 (defn solve-2
   []
-  (let [hashtable (vec (repeat 256 (array-map)))]
+  (let [hashtable (new-h)]
     (->> (clojure.string/split input #",")
          (map parse-op)
          (reduce (fn [hashtable {:keys [label value op]}]
-                   (let [i (hash label)]
-                     (case op
-                       :equals (update hashtable i #(assoc % label value))
-                       :dash (update hashtable i #(dissoc % label)))))
+                   (case op
+                     :equals (assoc-h hashtable label value)
+                     :dash (dissoc-h hashtable label)))
                  hashtable)
          (focusing-power))))
